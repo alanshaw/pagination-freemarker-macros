@@ -1,14 +1,14 @@
 <#--
  * Copyright 2011 Alan Shaw
- * 
+ *
  * http://www.freestyle-developments.co.uk
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,10 @@
 <#--
  * Pagination macros.
  *
- * The use of these macros requires either an model attribute called "paginationData" to be set or if you want to call 
+ * The use of these macros requires either an model attribute called "paginationData" to be set or if you want to call
  * it something else, or have more than one list of items that needs paginating, you can use the "bind" macro to set
  * the current pagination data that subsequent calls to other macros will use.
- * 
+ *
  * Either way, the pagination data object is expected to contain (at least) the following properties:
  *
  * pageNumber -> The current page number
@@ -30,15 +30,15 @@
  * pagesAvailable -> The total number of pages
  * sortDirection -> The sorting direction (ascending or descending)
  * sortField -> The field currently sorted by
- * 
- * 
+ *
+ *
  * Page links consist of the current request url and a query string that looks like:
- * 
+ *
  * ?field=&page=&size=&direction=
- * 
- * 
+ *
+ *
  * Localization messages are looked up using the following keys:
- * 
+ *
  * pagination.first -> Text for the first page link (default "« First")
  * pagination.last -> Text for the last page link (default "Last »")
  * pagination.next -> Text for the next page link (default "Next »")
@@ -148,6 +148,9 @@
 		<#if (pageNumMin < 0)>
 			<#local pageNumMin = 0 />
 		</#if>
+		<#if (pageNumMax < 0)>
+			<#local pageNumMax = 0 />
+		</#if>
 	</#if>
 	<#list pageNumMin..pageNumMax as pageNumber>
 		<#if pageNumber == data.pageNumber>
@@ -161,7 +164,7 @@
 
 <#--
  * Outputs a link to a specific page.
- * 
+ *
  * @param pageNumber To page number ot link to
  * @param text (Optional) The link text (Defaults to page number if not set)
  * @param attributes (Optional) Any HTML attributes to add to the element
@@ -180,14 +183,19 @@
  * Outputs the current page number and the total pages
 -->
 <#macro counter>
-	<@spring.messageArgsText "pagination.counter", [data.pageNumber + 1, data.pagesAvailable], "{0} of {1}" />
+	<#if data.pagesAvailable == 0>
+		<#local pagesAvailable = 1 />
+	<#else>
+		<#local pagesAvailable = data.pagesAvailable />
+	</#if>
+	<@spring.messageArgsText "pagination.counter", [data.pageNumber + 1, pagesAvailable], "{0} of {1}" />
 </#macro>
 
 <#--
  * Outputs a link to sort by a field.
- 
- * @param field The field to sort by. If field is different to the current sort field, the link will change the sort 
- * field but not the sort direction. If the field is the same as the current sort field, the link will change the sort 
+
+ * @param field The field to sort by. If field is different to the current sort field, the link will change the sort
+ * field but not the sort direction. If the field is the same as the current sort field, the link will change the sort
  * direction.
  * @param text (Optional) The link text. If no text is specified the field name is used with a upper case first letter.
  * @param attributes (Optional) Any HTML attributes to add to the element
@@ -215,4 +223,3 @@
 	</#if>
 	<a href="?field=${field?url}&amp;page=${data.pageNumber}&amp;size=${data.pageSize}&amp;direction=${direction?url}"${attributes}>${text?html}</a>
 </#macro>
-
