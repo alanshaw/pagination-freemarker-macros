@@ -129,7 +129,7 @@
  * Outputs the page numbers and links
  *
  * @param maxPages (Optional) The maximum number of page links to show
- * @param separator (Optional) The seperator between page links
+ * @param separator (Optional) The separator between page links
 -->
 <#macro numbers maxPages = 9 separator = " | ">
 	<#local pagesBefore = (maxPages / 2)?floor />
